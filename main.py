@@ -91,5 +91,8 @@ def main():
         media_ids = get_media_ids(cl)
         print("Messaging commentors...")
         message_commentors(cl, media_ids)
+        sleep(60)
 
+
+if __name__ == "__main__":
     main()
