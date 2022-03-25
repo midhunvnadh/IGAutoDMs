@@ -59,10 +59,18 @@ def add_user_as_messaged(username):
         f.close()
 
 
-def check_if_already_messaged(username):
+def already_messaged(username):
     with open("data/messaged_users.txt") as f:
         lines = f.readlines()
         return username in lines
+
+
+def message(cl, username):
+    message = get_random_line()
+    user_id = cl.user_id_from_username(username)
+    cl.direct_send(message, user_ids=[user_id])
+    add_user_as_messaged(username)
+    print(f"Messaged {username}!")
 
 
 def message_commentors(cl, media_ids):
@@ -71,13 +79,11 @@ def message_commentors(cl, media_ids):
         for comment in comments:
             comment = comment.dict()
             username = comment["user"]["username"]
-            if not check_if_already_messaged(username):
-                message = get_random_line()
-                user_id = cl.user_id_from_username(username)
-                cl.direct_send(message, user_ids=[user_id])
-                add_user_as_messaged(username)
-                print(f"Messaged {username}!")
-                exit()
+            if not already_messaged(username):
+                try:
+                    message(cl, username)
+                except:
+                    print(f"Couldn't message {username}")
 
 
 def main():
