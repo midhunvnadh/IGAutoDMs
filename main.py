@@ -16,7 +16,7 @@ except:
 
 def create_if_not_file_exists(name):
     if not os.path.exists(name):
-        with open(f"data/{name}", "w") as f:
+        with open(name, "w") as f:
             f.write("")
             f.close()
 
