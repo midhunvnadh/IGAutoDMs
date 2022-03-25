@@ -1,4 +1,4 @@
-FROM python:slim-buster
+FROM python:latest
 WORKDIR /bot
 ADD . /bot
 
