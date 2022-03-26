@@ -6,8 +6,8 @@ import os
 
 
 try:
-    user_name = os.environ['USERNAME']
-    password = os.environ['PASSWORD']
+    user_name = os.environ['IG_USERNAME']
+    password = os.environ['IG_PASSWORD']
 except:
     print("Issue with env!!!")
     sleep(60)
@@ -34,10 +34,17 @@ def get_random_line():
 
 
 def login():
+    session_file_path = f'data/session_{user_name}.json'
     cl = Client()
     print("Logging in...")
+    try:
+        cl.load_settings(session_file_path)
+        print("Session file found!!!")
+    except:
+        pass
     cl.login(user_name, password)
-    print("Logged in...")
+    cl.dump_settings(session_file_path)
+    print("Done")
     return cl
 
 
@@ -60,8 +67,9 @@ def add_user_as_messaged(username):
 
 
 def already_messaged(username):
-    with open("data/messaged_users.txt") as f:
-        lines = f.readlines()
+    with open("data/messaged_users.txt", "r") as f:
+        string = f.read()
+        lines = string.splitlines()
         return username in lines
 
 
@@ -82,8 +90,8 @@ def message_commentors(cl, media_ids):
             if not already_messaged(username):
                 try:
                     message(cl, username)
-                except:
-                    print(f"Couldn't message {username}")
+                except Exception as e:
+                    print(f"Couldn't message {username}", e)
 
 
 def main():
