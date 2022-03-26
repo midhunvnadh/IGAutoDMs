@@ -1,5 +1,6 @@
 from instagrapi import Client
 from time import sleep
+from data_provider import add_user_as_messaged, already_messaged
 import random
 import json
 import os
@@ -49,28 +50,15 @@ def login():
 
 
 def get_media_ids(cl):
-    feed = cl.get_timeline_feed()["feed_items"]
-    medias = []
-    for post in feed:
-        try:
-            media = post["media_or_ad"]["pk"]
-            medias.append(cl.media_id(media))
-        except:
-            pass
-    return medias
-
-
-def add_user_as_messaged(username):
-    with open("data/messaged_users.txt", "a") as f:
-        f.write(f"{username}\n")
-        f.close()
-
-
-def already_messaged(username):
-    with open("data/messaged_users.txt", "r") as f:
-        string = f.read()
-        lines = string.splitlines()
-        return username in lines
+    following = cl.user_following(cl.user_id, 0)
+    media_ids = []
+    for user in following:
+        user_name = cl.username_from_user_id(user)
+        print("Searching for media from ", user_name)
+        medias = cl.user_medias(user, 5)
+        for media in medias:
+            media_ids.append(media.id)
+    return media_ids
 
 
 def message(cl, username):
